@@ -3,7 +3,6 @@ import webbrowser
 import http.server
 import socketserver
 from urllib.parse import parse_qs
-import csv
 import requests
 from pint import UnitRegistry
 import logging
@@ -31,6 +30,7 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
                 create_table_if_not_exists(cursor)
                 latest_activity_date = get_latest_activity_date(cursor)
 
+            # Only get new activities to avoid rate limits
             activities = client.get_activities(after=latest_activity_date)
 
             logger = logging.getLogger()
@@ -79,7 +79,7 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
 
                 elif darksky_request.status_code == 400:
                     error_msg = "{} Error: {}".format(darksky_request.json()['code'], darksky_request.json()['error'])
-                    print(error_msg + " Skipping request and continuing to next activity")
+                    print(error_msg + ", skipping request and continuing to next activity")
                 elif darksky_request.status_code == 403:
                     print("{} Error: DarkSky API daily usage limit exceeded".format(darksky_request.json()['code']))
                     print("Terminating")
@@ -148,7 +148,7 @@ def get_latest_activity_date(cursor):
     if latest_activity_date is None:
         return None
     else:
-        print("latest date is", latest_activity_date)
+        print("latest activity date is", datetime.fromtimestamp(latest_activity_date))
         return datetime.fromtimestamp(latest_activity_date)
 
 def create_table_if_not_exists(cursor):
@@ -183,7 +183,9 @@ with open("keys.yml", 'r') as keys_file:
 client = Client()
 authorize_url = client.authorization_url(
     client_id=secret_keys['client_id'], 
-    redirect_uri='http://127.0.0.1:5000/authorized'
+    redirect_uri='http://127.0.0.1:5000/authorized',
+    # Change to None if you don't want private activities included
+    scope='view_private'
 )
 
 # Have the user click the authorization URL, a 'code' param will be added to the redirect_uri
