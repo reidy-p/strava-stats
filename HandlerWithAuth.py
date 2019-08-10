@@ -1,12 +1,8 @@
-from stravalib.client import Client
-import webbrowser
 import http.server
-import socketserver
 from urllib.parse import parse_qs
 import requests
 from pint import UnitRegistry
 import logging
-import yaml
 import sys
 import sqlite3
 from datetime import datetime
@@ -15,6 +11,8 @@ from datetime import datetime
 class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
+        client = self.server.client
+        secret_keys = self.server.secret_keys
         parsed_qs = parse_qs(self.path)
         if 'code' in parsed_qs:
             self.send_response(200)
@@ -37,7 +35,7 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
             logger.setLevel('ERROR')
 
             for activity in activities:
-                darksky_request = make_darksky_request(activity.start_latitude, activity.start_longitude, activity.start_date_local)
+                darksky_request = make_darksky_request(secret_keys['darksky_api_key'], activity.start_latitude, activity.start_longitude, activity.start_date_local)
 
                 if darksky_request.status_code == 200:
                     weather_data = darksky_request.json()['currently']
@@ -97,17 +95,12 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
             self.wfile.write(bytes(open("templates/notauthorized.html").read(), "UTF-8"))
 
 
-class TCPServerWithReusableAddress(socketserver.TCPServer):
-    # Allow the server to reuse an address. The default of False 
-    # means that stopping and then restarting the server in quick 
-    # succession leads to an error
-    allow_reuse_address = True
 
 
-def make_darksky_request(latitude, longitude, time):
+def make_darksky_request(api_key, latitude, longitude, time):
     # Dark Sky API can't handle microseconds
     clean_time = time.replace(microsecond=0)
-    url = "https://api.darksky.net/forecast/{}/{},{}".format(secret_keys['darksky_api_key'], latitude, longitude, clean_time)
+    url = "https://api.darksky.net/forecast/{}/{},{}".format(api_key, latitude, longitude, clean_time)
     return requests.get(url)
 
 def calculate_speed(moving_time_seconds, distance_metres):
@@ -178,23 +171,4 @@ def create_table_if_not_exists(cursor):
     """
     cursor.execute(sql_create_table)
 
-
-with open("keys.yml", 'r') as keys_file:
-    secret_keys = yaml.safe_load(keys_file)
-
-client = Client()
-authorize_url = client.authorization_url(
-    client_id=secret_keys['client_id'], 
-    redirect_uri='http://127.0.0.1:5000/authorized',
-    # Change to None if you don't want private activities included
-    scope='activity:read_all'
-)
-
-# Have the user click the authorization URL, a 'code' param will be added to the redirect_uri
-webbrowser.open(authorize_url)
-
-with TCPServerWithReusableAddress(("127.0.0.1", 5000), HandlerWithAuth) as httpd:
-    print("serving at port", 5000)
-    httpd.handle_request()
-    print("shutting down server")
 

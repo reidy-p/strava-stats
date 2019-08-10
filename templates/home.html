@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-<table class="table">
+<h2>Worst Conditions</h2>
+<table class="table table-responsive">
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Activity Name</th>
-      <th scope="col">Weather Summary</th>
-      <th scope="col">Temperature (Fahren.)</th>
-      <th scope="col">Humidity</th>
-      <th scope="col">Mins per KM</th>
-      <th scope="col">Adjusted mins per KM</th>
+      <th scope="col" class="text-nowrap">Activity Name</th>
+      <th scope="col" class="text-nowrap">Weather Summary</th>
+      <th scope="col" class="text-nowrap">Temperature (Fahren.)</th>
+      <th scope="col" class="text-nowrap">Humidity</th>
+      <th scope="col" class="text-nowrap">Pace (minutes/km)</th>
+      <th scope="col" class="text-nowrap">Adjusted Pace (minutes/km)</th>
     </tr>
   </thead>
   <tbody>
@@ -20,8 +21,8 @@
         <td> {{ post.summary }} </td>
         <td> {{ post.temperature }} </td>
         <td> {{ post.humidity }} </td>
-        <td> {{ post.minutes_per_km }} </td>
-        <td> {{ post.minutes_per_km_adjusted }} </td>
+        <td> {{ post.minutes_per_km | round(2, 'common') }} </td>
+        <td> {{ post.minutes_per_km_adjusted | round(2, 'common') }} </td>
     </tr>
     {% endfor %}
   </tbody>
