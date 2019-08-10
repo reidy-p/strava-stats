@@ -20,7 +20,7 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', "text/html")
             self.end_headers()
-            self.wfile.write(bytes(open("authorized.html").read(), "UTF-8"))
+            self.wfile.write(bytes(open("templates/authorized.html").read(), "UTF-8"))
 
             token_response = client.exchange_code_for_token(client_id=secret_keys['client_id'], client_secret=secret_keys['client_secret'], code=parsed_qs['code'])
 
@@ -51,6 +51,7 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
 
                         row = (
                             activity.upload_id,
+                            activity.name,
                             activity.start_date.timestamp(),
                             activity.moving_time.total_seconds(),
                             activity.type,
@@ -74,7 +75,7 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
                         # Will there be duplicate rows?
                         # Avoid SQL injection
                         c.execute("""INSERT OR IGNORE INTO activities
-                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", row)
+                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", row)
 
 
                 elif darksky_request.status_code == 400:
@@ -93,7 +94,7 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
             self.send_response(401)
             self.send_header('Content-type', "text/html")
             self.end_headers()
-            self.wfile.write(bytes(open("notauthorized.html").read(), "UTF-8"))
+            self.wfile.write(bytes(open("templates/notauthorized.html").read(), "UTF-8"))
 
 
 class TCPServerWithReusableAddress(socketserver.TCPServer):
@@ -154,6 +155,7 @@ def get_latest_activity_date(cursor):
 def create_table_if_not_exists(cursor):
     sql_create_table = """CREATE TABLE IF NOT EXISTS activities (
         upload_id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
         start_date_unix INTEGER NOT NULL,
         moving_time_seconds INTEGER NOT NULL,
         type TEXT NOT NULL,
@@ -163,7 +165,7 @@ def create_table_if_not_exists(cursor):
         location_country TEXT NOT NULL,
         start_latitude REAL NOT NULL,
         start_longitude REAL NOT NULL,
-        summary TEXT NOT NULL,
+        weather_summary TEXT NOT NULL,
         temperature REAL NOT NULL,
         humidity REAL NOT NULL,
         dew_point REAL NOT NULL,
@@ -185,7 +187,7 @@ authorize_url = client.authorization_url(
     client_id=secret_keys['client_id'], 
     redirect_uri='http://127.0.0.1:5000/authorized',
     # Change to None if you don't want private activities included
-    scope='view_private'
+    scope='activity:read_all'
 )
 
 # Have the user click the authorization URL, a 'code' param will be added to the redirect_uri

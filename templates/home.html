@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Activity Name</th>
+      <th scope="col">Weather Summary</th>
+      <th scope="col">Temperature (Fahren.)</th>
+      <th scope="col">Humidity</th>
+      <th scope="col">Mins per KM</th>
+      <th scope="col">Adjusted mins per KM</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for post in posts %}
+    <tr>
+        <th scope="row"> {{ loop.index }} </th>
+        <td> {{ post.name }} </td>
+        <td> {{ post.summary }} </td>
+        <td> {{ post.temperature }} </td>
+        <td> {{ post.humidity }} </td>
+        <td> {{ post.minutes_per_km }} </td>
+        <td> {{ post.minutes_per_km_adjusted }} </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}
