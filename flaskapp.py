@@ -4,6 +4,7 @@ app = Flask(__name__)
 
 conn = sqlite3.connect('activities.db')
 with conn:
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("""
         SELECT name, minutes_per_km, minutes_per_km_adjusted, weather_summary, temperature, humidity 
@@ -11,16 +12,7 @@ with conn:
         ORDER BY hadley_score DESC 
         LIMIT 10
     """)
-    posts = []
-    for row in cursor.fetchall():
-        posts.append({
-            'name': row[0],
-            'minutes_per_km': row[1],
-            'minutes_per_km_adjusted': row[2],
-            'summary': row[3],
-            'temperature': row[4],
-            'humidity': row[5]
-        })
+    posts = [dict(row) for row in cursor.fetchall()]
 
 
 @app.route("/")
