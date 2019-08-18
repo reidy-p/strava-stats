@@ -11,7 +11,6 @@ Usage
 
 TODO
 ---
-* Top 10 activities with the biggest discrepancies between actual speed and adjusted speed
 * Improved location data using latitude and longitude and Google maps API
 * Try to predict fitness at certain points of time
 * Command line arguments
