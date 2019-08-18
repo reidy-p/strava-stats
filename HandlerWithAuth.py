@@ -47,9 +47,19 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
                         minutes_per_km = calculate_speed(activity.moving_time.total_seconds(), activity.distance.get_num())
                         minutes_per_km_hadley_adjusted = minutes_per_km * (1 - hadley_pace_adjustment)
 
+                        activity_link = "https://www.strava.com/activities/" + str(activity.id)
+
+                        workout_types_lookup = {
+                            '0': 'Easy Run',
+                            '1': 'Race',
+                            '2': 'Long Run',
+                            '3': 'Workout'
+                        }
+
                         row = (
-                            activity.upload_id,
+                            activity.id,
                             activity.name,
+                            workout_types_lookup.get(activity.workout_type, 'N/A'),
                             activity.start_date.timestamp(),
                             activity.moving_time.total_seconds(),
                             activity.type,
@@ -73,7 +83,7 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
                         # Will there be duplicate rows?
                         # Avoid SQL injection
                         c.execute("""INSERT OR IGNORE INTO activities
-                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", row)
+                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", row)
 
 
                 elif darksky_request.status_code == 400:
@@ -147,8 +157,9 @@ def get_latest_activity_date(cursor):
 
 def create_table_if_not_exists(cursor):
     sql_create_table = """CREATE TABLE IF NOT EXISTS activities (
-        upload_id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
+        workout_type TEXT NOT NULL,
         start_date_unix INTEGER NOT NULL,
         moving_time_seconds INTEGER NOT NULL,
         type TEXT NOT NULL,

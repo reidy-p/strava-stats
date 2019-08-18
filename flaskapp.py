@@ -7,7 +7,7 @@ with conn:
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT name, minutes_per_km, minutes_per_km_adjusted, weather_summary, temperature, humidity 
+        SELECT id, name, workout_type, minutes_per_km, minutes_per_km_adjusted, weather_summary, temperature, humidity 
         FROM activities 
         ORDER BY hadley_score DESC 
         LIMIT 10
