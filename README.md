@@ -12,7 +12,7 @@ Usage
 TODO
 ---
 * Improved location data using latitude and longitude and Google maps API
-* Try to predict fitness at certain points of time
+* Try to predict fitness at certain points of time (vdot based on races)
 * Command line arguments
 * Adjusting pacing depending on wind (maybe too hard because of direction)
 * Use richer python types for quantities rather than the simple string or numeric values that the Strava API returns or the simple quantities that stravalib returns

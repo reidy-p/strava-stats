@@ -18,6 +18,23 @@
     {% endif %}
 </head>
 <body>
+<header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+          <a class="navbar-brand mr-4" href="/">Strava Stats</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <a class="nav-item nav-link" href="/adjustedpaces">Weather Adjusted Paces</a>
+              <a class="nav-item nav-link" href="/anomalies">Anomalies</a>
+              <a class="nav-item nav-link" href="/vdot">VDOT</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
     <main role="main" class="container">
       <div class="row">
         {% block content %}{% endblock %}

@@ -2,12 +2,16 @@ from flask import Flask, render_template, url_for
 from sklearn.neighbors import LocalOutlierFactor
 import pandas as pd
 import sqlite3
+from calculate_vdot import calculate_vdot
 app = Flask(__name__)
 
 
 @app.route("/")
-@app.route("/home")
 def home():
+   return render_template('home.html') 
+
+@app.route("/adjustedpaces")
+def adjusted_paces():
     conn = sqlite3.connect('activities.db')
     with conn:
         conn.row_factory = sqlite3.Row
@@ -19,7 +23,7 @@ def home():
             LIMIT 10
         """)
     posts = [dict(row) for row in cursor.fetchall()]
-    return render_template('home.html', posts=posts)
+    return render_template('adjusted_paces.html', posts=posts)
 
 @app.route("/anomalies")
 def anomalies():
@@ -37,6 +41,26 @@ def anomalies():
     y_pred = clf.fit_predict(activities[['distance_metres', 'total_elevation_gain_metres', 'minutes_per_km', 'minutes_per_km_adjusted', 'temperature', 'humidity']])
     anomalies = activities[y_pred == -1]
     return render_template('anomalies.html', posts=anomalies.to_dict(orient='records'))
+
+@app.route("/vdot")
+def vdot():
+    conn = sqlite3.connect('activities.db')
+    with conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT id, name, workout_type, weather_summary, distance_metres, moving_time_seconds, total_elevation_gain_metres, minutes_per_km, minutes_per_km_adjusted, temperature, humidity 
+            FROM activities 
+            WHERE workout_type='Race'
+        """)
+        races = pd.DataFrame([dict(row) for row in cursor.fetchall()])
+
+    posts = []
+    for r in races.to_dict(orient='records'):
+        r['vdot'] = calculate_vdot(r['distance_metres'], r['moving_time_seconds'])
+        posts.append(r)
+
+    return render_template('races.html', posts=posts)
 
 if __name__ == '__main__':
     app.run(debug=True)

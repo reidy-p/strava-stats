@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Races</h2>
+<table class="table table-responsive">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col" class="text-nowrap">Activity Name</th>
+      <th scope="col" class="text-nowrap">Distance (metres)</th>
+      <th scope="col" class="text-nowrap">Weather Summary</th>
+      <th scope="col" class="text-nowrap">Temperature (°F)</th>
+      <th scope="col" class="text-nowrap">Humidity</th>
+      <th scope="col" class="text-nowrap">Pace (minutes/km)</th>
+      <th scope="col" class="text-nowrap">Adjusted Pace (minutes/km)</th>
+      <th scope="col" class="text-nowrap">VDOT</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for post in posts %}
+    <tr>
+        <th scope="row"> {{ loop.index }} </th>
+        <td> <a href="https://www.strava.com/activities/{{ post.id }}">{{ post.name }}</a> </td>
+        <td> {{ post.distance_metres }} </td>
+        <td> {{ post.weather_summary }} </td>
+        <td> {{ post.temperature }} </td>
+        <td> {{ post.humidity }} </td>
+        <td> {{ post.minutes_per_km | round(2, 'common') }} </td>
+        <td> {{ post.minutes_per_km_adjusted | round(2, 'common') }} </td>
+        <td> {{ post.vdot }} </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}
