@@ -1,10 +1,8 @@
 import requests
 
-def calculate_vdot(distance_metres, seconds):
+def format_seconds(seconds):
     """
-    Calculate VDOT using the runsmartproject calculator. There is no public
-    API for this calculator so I reverse engineered how the POST request
-    seems to work to get the VDOT calculations and equivalent race results 
+    Create a string of HH:MM:SS from seconds
     """
 
     # hours
@@ -15,17 +13,24 @@ def calculate_vdot(distance_metres, seconds):
     minutes = remaining_seconds // 60
     # remaining seconds
     seconds = remaining_seconds - (minutes * 60)
-    
+
+    return '{:02}:{:02}:{:02}'.format(int(hours), int(minutes), int(seconds))
+
+def calculate_vdot(distance_metres, seconds):
+    """
+    Calculate VDOT using the runsmartproject calculator. There is no public
+    API for this calculator so I reverse engineered how the POST request
+    seems to work to get the VDOT calculations and equivalent race results 
+    """
+
     request_data = {
-      'distance': round(distance_metres, -3) / 1000,
+      'distance': round(distance_metres, -2) / 1000,
       'unit': 'km',
-      'time': '{:02}:{:02}:{:02}'.format(int(hours), int(minutes), int(seconds))
+      'time': format_seconds(seconds)
     }
     
     vdot_data = requests.post('https://runsmartproject.com/vdot/app/api/find_paces', 
                               data=request_data)
 
-    print(vdot_data.json()['paces']['equivs'])
     return (vdot_data.json()['vdot'], vdot_data.json()['paces']['equivs'])
- 
 

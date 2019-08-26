@@ -11,6 +11,7 @@ This page shows the estimated VDOT value based on activities that are marked as 
       <th scope="col">#</th>
       <th scope="col" class="text-nowrap">Activity Name</th>
       <th scope="col" class="text-nowrap">Distance (metres)</th>
+      <th scope="col" class="text-nowrap">Moving Time</th>
       <th scope="col" class="text-nowrap">Pace (minutes/km)</th>
       <th scope="col" class="text-nowrap">VDOT</th>
       <th scope="col" class="text-nowrap" style="background-color:#cbd5db">Marathon</th>
@@ -26,6 +27,7 @@ This page shows the estimated VDOT value based on activities that are marked as 
         <th scope="row"> {{ loop.index }} </th>
         <td> <a href="https://www.strava.com/activities/{{ post.id }}">{{ post.name }}</a> </td>
         <td> {{ post.distance_metres }} </td>
+        <td> {{ post.moving_time_formatted }} </td>
         <td> {{ post.minutes_per_km | round(2, 'common') }} </td>
         <td> {{ post.vdot }} </td>
         {% for equiv in post.equivs %}

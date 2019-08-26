@@ -2,7 +2,8 @@ from flask import Flask, render_template, url_for
 from sklearn.neighbors import LocalOutlierFactor
 import pandas as pd
 import sqlite3
-from calculate_vdot import calculate_vdot
+from utils import calculate_vdot, format_seconds
+import datetime
 app = Flask(__name__)
 
 
@@ -58,6 +59,7 @@ def vdot():
     posts = []
     for r in races.to_dict(orient='records'):
         (r['vdot'], r['equivs']) = calculate_vdot(r['distance_metres'], r['moving_time_seconds'])
+        r['moving_time_formatted'] = datetime.timedelta(seconds=r['moving_time_seconds'])
         posts.append(r)
 
     return render_template('races.html', posts=posts)

@@ -14,7 +14,6 @@ Usage
 
 TODO
 ---
-* Fix VDOT calculation for miles
 * Improved location data using latitude and longitude and Google maps API
 * Command line arguments
 * Adjusting pacing depending on wind (maybe too hard because of direction)
