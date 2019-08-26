@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
+<p>
+This page shows the estimated VDOT value based on activities that are marked as races. <a href="https://en.wikipedia.org/wiki/Jack_Daniels_(coach)#VDOT">VDOT</a> is an estimate of overall fitness and can be used to calculate equivalent performances and recommended training paces. The shaded section of the table below shows the estimated equivalent performances for other distances for each race.
+</p>
+
 <h2>Races</h2>
 <table class="table table-responsive">
   <thead>
@@ -7,28 +11,53 @@
       <th scope="col">#</th>
       <th scope="col" class="text-nowrap">Activity Name</th>
       <th scope="col" class="text-nowrap">Distance (metres)</th>
-      <th scope="col" class="text-nowrap">Weather Summary</th>
-      <th scope="col" class="text-nowrap">Temperature (°F)</th>
-      <th scope="col" class="text-nowrap">Humidity</th>
       <th scope="col" class="text-nowrap">Pace (minutes/km)</th>
-      <th scope="col" class="text-nowrap">Adjusted Pace (minutes/km)</th>
       <th scope="col" class="text-nowrap">VDOT</th>
+      <th scope="col" class="text-nowrap" style="background-color:#cbd5db">Marathon</th>
+      <th scope="col" class="text-nowrap" style="background-color:#cbd5db">Half-Marathon</th>
+      <th scope="col" class="text-nowrap" style="background-color:#cbd5db">10K</th>
+      <th scope="col" class="text-nowrap" style="background-color:#cbd5db">5K</th>
+      <th scope="col" class="text-nowrap" style="background-color:#cbd5db">1 Mile</th>
     </tr>
   </thead>
   <tbody>
     {% for post in posts %}
-    <tr>
+    <tr data-toggle="collapse" data-target="#accordion" class="clickable">
         <th scope="row"> {{ loop.index }} </th>
         <td> <a href="https://www.strava.com/activities/{{ post.id }}">{{ post.name }}</a> </td>
         <td> {{ post.distance_metres }} </td>
-        <td> {{ post.weather_summary }} </td>
-        <td> {{ post.temperature }} </td>
-        <td> {{ post.humidity }} </td>
         <td> {{ post.minutes_per_km | round(2, 'common') }} </td>
-        <td> {{ post.minutes_per_km_adjusted | round(2, 'common') }} </td>
         <td> {{ post.vdot }} </td>
+        {% for equiv in post.equivs %}
+            {% if equiv.distance == "Marathon" %}
+                <td style="background-color:#cbd5db">
+                     {{equiv.time}}
+                </td>
+            {% endif %}
+            {% if equiv.distance == "Half marathon" %}
+                <td style="background-color:#cbd5db">
+                     {{equiv.time}}
+                </td>
+            {% endif %}
+            {% if equiv.distance == "10K" %}
+                <td style="background-color:#cbd5db">
+                     {{equiv.time}}
+                </td>
+            {% endif %}
+            {% if equiv.distance == "5K" %}
+                <td style="background-color:#cbd5db">
+                     {{equiv.time}}
+                </td>
+            {% endif %}
+            {% if equiv.distance == "1Mi" %}
+                <td style="background-color:#cbd5db">
+                     {{equiv.time}}
+                </td>
+            {% endif %}
+        {% endfor %}
     </tr>
     {% endfor %}
   </tbody>
 </table>
+
 {% endblock content %}

@@ -24,6 +24,8 @@ def calculate_vdot(distance_metres, seconds):
     
     vdot_data = requests.post('https://runsmartproject.com/vdot/app/api/find_paces', 
                               data=request_data)
-    return vdot_data.json()['vdot']
+
+    print(vdot_data.json()['paces']['equivs'])
+    return (vdot_data.json()['vdot'], vdot_data.json()['paces']['equivs'])
  
 

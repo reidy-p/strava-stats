@@ -49,7 +49,7 @@ def vdot():
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT id, name, workout_type, weather_summary, distance_metres, moving_time_seconds, total_elevation_gain_metres, minutes_per_km, minutes_per_km_adjusted, temperature, humidity 
+            SELECT id, name, distance_metres, moving_time_seconds, minutes_per_km 
             FROM activities 
             WHERE workout_type='Race'
         """)
@@ -57,7 +57,7 @@ def vdot():
 
     posts = []
     for r in races.to_dict(orient='records'):
-        r['vdot'] = calculate_vdot(r['distance_metres'], r['moving_time_seconds'])
+        (r['vdot'], r['equivs']) = calculate_vdot(r['distance_metres'], r['moving_time_seconds'])
         posts.append(r)
 
     return render_template('races.html', posts=posts)

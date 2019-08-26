@@ -1,9 +1,12 @@
-[Strava](https://www.strava.com) is a popular social network where runners and cyclists can upload and compare data from their activities. However, athletic performance can be significantly affected by weather conditions such as temperature, wind, and humidity and this data is typically not available on Strava. This project allows a user to download their own running data from Strava's API and to combine it with weather data from the [DarkSky API](https://www.darksky.net/dev/) to adjust for weather conditions.
-
 This project is still under active development.
+
+[Strava](https://www.strava.com) is a popular social network where runners and cyclists can upload and compare data from their activities. This project allows a user to download their own running data from Strava's API and to calculate and view additional statistics.
 
 Features
 ---
+* Calculate adjusted running paces that take account of temperature and humidity using historical weather data from the [DarkSky API](https://darksky.net/dev)
+* Calculate VDOT based on race performances and view estimates of equivalent race results
+* Detect anomalous activities
 
 Usage
 ---
@@ -11,8 +14,8 @@ Usage
 
 TODO
 ---
+* Fix VDOT calculation for miles
 * Improved location data using latitude and longitude and Google maps API
-* Try to predict fitness at certain points of time (vdot based on races)
 * Command line arguments
 * Adjusting pacing depending on wind (maybe too hard because of direction)
 * Use richer python types for quantities rather than the simple string or numeric values that the Strava API returns or the simple quantities that stravalib returns
