@@ -33,13 +33,13 @@ def anomalies():
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT id, name, workout_type, distance_metres, total_elevation_gain_metres, minutes_per_km, minutes_per_km_adjusted, temperature, humidity 
+            SELECT id, name, workout_type, distance_metres, moving_time, moving_time_seconds, total_elevation_gain_metres, minutes_per_km, minutes_per_km_adjusted, temperature, humidity 
             FROM activities 
         """)
         activities = pd.DataFrame([dict(row) for row in cursor.fetchall()])
     
     clf = LocalOutlierFactor()
-    y_pred = clf.fit_predict(activities[['distance_metres', 'total_elevation_gain_metres', 'minutes_per_km', 'minutes_per_km_adjusted', 'temperature', 'humidity']])
+    y_pred = clf.fit_predict(activities[['distance_metres', 'moving_time_seconds', 'total_elevation_gain_metres', 'minutes_per_km', 'minutes_per_km_adjusted', 'temperature', 'humidity']])
     anomalies = activities[y_pred == -1]
     return render_template('anomalies.html', posts=anomalies.to_dict(orient='records'))
 
