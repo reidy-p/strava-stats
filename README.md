@@ -16,11 +16,18 @@ Screenshots
 
 Usage
 ---
+Setup the configuration file (``config.yml``) as follows:
+```yaml
+client_id: YOUR_CLIENT_ID
+client_secret: YOUR_CLIENT_SECRET
+darksky_api_key: YOUR_DARKSKY_API_KEY
+```
 
 
 TODO
 ---
 * Improved anomaly detection
+* Package structure
 * Command line arguments
 * Adjusting pacing depending on wind (maybe too hard because of direction)
 * Improved location data using latitude and longitude and Google maps API

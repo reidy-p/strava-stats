@@ -4,7 +4,7 @@ import yaml
 from TCPServerWithReusableAddress import TCPServerWithReusableAddress
 from HandlerWithAuth import HandlerWithAuth
 
-with open("config/keys.yml", 'r') as keys_file:
+with open("config.yml", 'r') as keys_file:
     secret_keys = yaml.safe_load(keys_file)
 
 client = Client()
