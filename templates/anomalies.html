@@ -20,7 +20,8 @@
         <th scope="row"> {{ loop.index }} </th>
         <td> <a href="https://www.strava.com/activities/{{ post.id }}">{{ post.name }}</a> </td>
         <td> {{ post.workout_type }} </td>
-        <td> {{ post.weather_summary }} </td>
+        <td> {{ post.distance_metres }} </td>
+        <td> {{ post.moving_time_formatted }} </td>
         <td> {{ post.temperature }} </td>
         <td> {{ post.humidity }} </td>
         <td> {{ post.minutes_per_km | round(2, 'common') }} </td>

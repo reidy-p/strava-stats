@@ -2,7 +2,7 @@ from flask import Flask, render_template, url_for
 from sklearn.neighbors import LocalOutlierFactor
 import pandas as pd
 import sqlite3
-from utils import calculate_vdot, format_seconds
+from utils import calculate_vdot
 import datetime
 app = Flask(__name__)
 
@@ -33,7 +33,7 @@ def anomalies():
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT id, name, workout_type, weather_summary, distance_metres, total_elevation_gain_metres, minutes_per_km, minutes_per_km_adjusted, temperature, humidity 
+            SELECT id, name, workout_type, distance_metres, total_elevation_gain_metres, minutes_per_km, minutes_per_km_adjusted, temperature, humidity 
             FROM activities 
         """)
         activities = pd.DataFrame([dict(row) for row in cursor.fetchall()])
@@ -50,7 +50,7 @@ def vdot():
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT id, name, distance_metres, moving_time_seconds, minutes_per_km 
+            SELECT id, name, distance_metres, moving_time, minutes_per_km 
             FROM activities 
             WHERE workout_type='Race'
         """)
@@ -58,8 +58,7 @@ def vdot():
 
     posts = []
     for r in races.to_dict(orient='records'):
-        (r['vdot'], r['equivs']) = calculate_vdot(r['distance_metres'], r['moving_time_seconds'])
-        r['moving_time_formatted'] = datetime.timedelta(seconds=r['moving_time_seconds'])
+        (r['vdot'], r['equivs']) = calculate_vdot(r['distance_metres'], r['moving_time'])
         posts.append(r)
 
     return render_template('races.html', posts=posts)

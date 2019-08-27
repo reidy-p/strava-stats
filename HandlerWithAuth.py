@@ -1,11 +1,11 @@
 import http.server
 from urllib.parse import parse_qs
 import requests
-from pint import UnitRegistry
 import logging
 import sys
 import sqlite3
 from datetime import datetime
+from utils import calculate_speed, calculate_hadley_score, format_seconds
 
 
 class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
@@ -61,6 +61,7 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
                             activity.name,
                             workout_types_lookup.get(activity.workout_type, 'N/A'),
                             activity.start_date.timestamp(),
+                            format_seconds(activity.moving_time.total_seconds()),
                             activity.moving_time.total_seconds(),
                             activity.type,
                             activity.total_elevation_gain.get_num(),
@@ -83,7 +84,7 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
                         # Will there be duplicate rows?
                         # Avoid SQL injection
                         c.execute("""INSERT OR IGNORE INTO activities
-                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", row)
+                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", row)
 
 
                 elif darksky_request.status_code == 400:
@@ -113,39 +114,6 @@ def make_darksky_request(api_key, latitude, longitude, time):
     url = "https://api.darksky.net/forecast/{}/{},{}".format(api_key, latitude, longitude, clean_time)
     return requests.get(url)
 
-def calculate_speed(moving_time_seconds, distance_metres):
-    ureg = UnitRegistry()
-    moving_minutes = (moving_time_seconds * ureg.seconds).to(ureg.minutes)
-    km = (distance_metres * ureg.meters).to(ureg.kilometers)
-
-    return moving_minutes / km
-
-def calculate_hadley_score(dewPoint, temperature):
-    hadley_score = dewPoint + temperature
-
-    if hadley_score <= 100:
-        adjustment = 0
-    elif hadley_score <= 110:
-        adjustment = 0.005
-    elif hadley_score <= 120:
-        adjustment = 0.01
-    elif hadley_score <= 130:
-        adjustment = 0.02
-    elif hadley_score <= 140:
-        adjustment = 0.03
-    elif hadley_score <= 150:
-        adjustment = 0.045
-    elif hadley_score <= 160:
-        adjustment = 0.06
-    elif hadley_score <= 170:
-        adjustment = 0.08
-    elif hadley_score <= 180:
-        adjustment = 0.10
-    else:
-        adjustment = 0
-
-    return (hadley_score, adjustment)
-
 def get_latest_activity_date(cursor):
     cursor.execute("""SELECT MAX(start_date_unix) FROM activities""")
     latest_activity_date = cursor.fetchone()[0]
@@ -161,6 +129,7 @@ def create_table_if_not_exists(cursor):
         name TEXT NOT NULL,
         workout_type TEXT NOT NULL,
         start_date_unix INTEGER NOT NULL,
+        moving_time TEXT NOT NULL,
         moving_time_seconds INTEGER NOT NULL,
         type TEXT NOT NULL,
         total_elevation_gain_metres REAL NOT NULL,

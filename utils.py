@@ -1,4 +1,5 @@
 import requests
+from pint import UnitRegistry
 
 def format_seconds(seconds):
     """
@@ -16,7 +17,7 @@ def format_seconds(seconds):
 
     return '{:02}:{:02}:{:02}'.format(int(hours), int(minutes), int(seconds))
 
-def calculate_vdot(distance_metres, seconds):
+def calculate_vdot(distance_metres, moving_time):
     """
     Calculate VDOT using the runsmartproject calculator. There is no public
     API for this calculator so I reverse engineered how the POST request
@@ -26,7 +27,7 @@ def calculate_vdot(distance_metres, seconds):
     request_data = {
       'distance': round(distance_metres, -2) / 1000,
       'unit': 'km',
-      'time': format_seconds(seconds)
+      'time': moving_time
     }
     
     vdot_data = requests.post('https://runsmartproject.com/vdot/app/api/find_paces', 
@@ -34,3 +35,35 @@ def calculate_vdot(distance_metres, seconds):
 
     return (vdot_data.json()['vdot'], vdot_data.json()['paces']['equivs'])
 
+def calculate_speed(moving_time_seconds, distance_metres):
+    ureg = UnitRegistry()
+    moving_minutes = (moving_time_seconds * ureg.seconds).to(ureg.minutes)
+    km = (distance_metres * ureg.meters).to(ureg.kilometers)
+
+    return moving_minutes / km
+
+def calculate_hadley_score(dewPoint, temperature):
+    hadley_score = dewPoint + temperature
+
+    if hadley_score <= 100:
+        adjustment = 0
+    elif hadley_score <= 110:
+        adjustment = 0.005
+    elif hadley_score <= 120:
+        adjustment = 0.01
+    elif hadley_score <= 130:
+        adjustment = 0.02
+    elif hadley_score <= 140:
+        adjustment = 0.03
+    elif hadley_score <= 150:
+        adjustment = 0.045
+    elif hadley_score <= 160:
+        adjustment = 0.06
+    elif hadley_score <= 170:
+        adjustment = 0.08
+    elif hadley_score <= 180:
+        adjustment = 0.10
+    else:
+        adjustment = 0
+
+    return (hadley_score, adjustment)
