@@ -67,3 +67,9 @@ def calculate_hadley_score(dewPoint, temperature):
         adjustment = 0
 
     return (hadley_score, adjustment)
+
+def make_darksky_request(api_key, latitude, longitude, time):
+    # Dark Sky API can't handle microseconds
+    clean_time = time.replace(microsecond=0)
+    url = "https://api.darksky.net/forecast/{}/{},{}".format(api_key, latitude, longitude, clean_time)
+    return requests.get(url)

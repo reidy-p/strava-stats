@@ -127,11 +127,11 @@ def download_data(code):
             print(error_msg + ", skipping request and continuing to next activity")
         elif darksky_request.status_code == 403:
             print("{} Error: DarkSky API daily usage limit exceeded".format(darksky_request.json()['code']))
-            print("Terminating")
+            print("Terminating data download")
             break
         else:
             print("{} Error: {}".format(darksky_request.json()['code'], darksky_request.json()['error']))
-            print("Terminating")
+            print("Terminating data download")
             break
         
     return redirect(url_for('home'))
@@ -142,24 +142,18 @@ def stravastats():
 
 @app.route("/adjustedpaces")
 def adjusted_paces():
-    try:
-        conn = sqlite3.connect('stravastats/activities.db')
-        with conn:
-            conn.row_factory = sqlite3.Row
-            cursor = conn.cursor()
-            cursor.execute("""
-                SELECT id, name, workout_type, minutes_per_km, minutes_per_km_adjusted, weather_summary, temperature, humidity 
-                FROM activities 
-                ORDER BY hadley_score DESC 
-                LIMIT 10
-            """)
-        posts = [dict(row) for row in cursor.fetchall()]
-        return render_template('adjusted_paces.html', posts=posts)
-    except sqlite3.OperationalError as e:
-        if str(e) == "no such table: activities":
-            return render_template('noactivitydata.html')
-        else:
-            raise
+    conn = sqlite3.connect('stravastats/activities.db')
+    with conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT id, name, workout_type, minutes_per_km, minutes_per_km_adjusted, weather_summary, temperature, humidity 
+            FROM activities 
+            ORDER BY hadley_score DESC 
+            LIMIT 10
+        """)
+    posts = [dict(row) for row in cursor.fetchall()]
+    return render_template('adjusted_paces.html', posts=posts)
 
 @app.route("/anomalies")
 def anomalies():
@@ -190,17 +184,18 @@ def vdot():
             WHERE workout_type='Race'
         """)
         races = pd.DataFrame([dict(row) for row in cursor.fetchall()])
-
+    
     posts = []
     for r in races.to_dict(orient='records'):
         (r['vdot'], r['equivs']) = calculate_vdot(r['distance_metres'], r['moving_time'])
         posts.append(r)
-
+    
     return render_template('races.html', posts=posts)
 
-def make_darksky_request(api_key, latitude, longitude, time):
-    # Dark Sky API can't handle microseconds
-    clean_time = time.replace(microsecond=0)
-    url = "https://api.darksky.net/forecast/{}/{},{}".format(api_key, latitude, longitude, clean_time)
-    return requests.get(url)
+@app.errorhandler(sqlite3.OperationalError)
+def handle_no_table(error):
+    if str(error) == "no such table: activities":
+        return render_template('noactivitydata.html')
+    else:
+        return render_template('sqliteerror.html', error=error)
 

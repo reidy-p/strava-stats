@@ -23,10 +23,17 @@ client_secret: YOUR_CLIENT_SECRET
 darksky_api_key: YOUR_DARKSKY_API_KEY
 ```
 
+To start the flask app run:
+```
+$ python run.py
+```
+
+Go to ``localhost:5000`` on your web browser
+
 
 TODO
 ---
-* Web interface for giving permission and downloading data
+* Improved logging
 * Use SQLAlchemy?
 * Improved anomaly detection
 * Package structure
