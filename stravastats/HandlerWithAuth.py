@@ -18,11 +18,11 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', "text/html")
             self.end_headers()
-            self.wfile.write(bytes(open("templates/authorized.html").read(), "UTF-8"))
+            self.wfile.write(bytes(open("stravastats/templates/authorized.html").read(), "UTF-8"))
 
             token_response = client.exchange_code_for_token(client_id=secret_keys['client_id'], client_secret=secret_keys['client_secret'], code=parsed_qs['code'])
 
-            conn = sqlite3.connect('activities.db')
+            conn = sqlite3.connect('stravastats/activities.db')
             with conn:
                 cursor = conn.cursor()
                 create_table_if_not_exists(cursor)
@@ -103,7 +103,7 @@ class HandlerWithAuth(http.server.BaseHTTPRequestHandler):
             self.send_response(401)
             self.send_header('Content-type', "text/html")
             self.end_headers()
-            self.wfile.write(bytes(open("templates/notauthorized.html").read(), "UTF-8"))
+            self.wfile.write(bytes(open("stravastats/templates/notauthorized.html").read(), "UTF-8"))
 
 
 

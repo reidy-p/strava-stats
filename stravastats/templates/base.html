@@ -27,16 +27,17 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="/adjustedpaces">Weather Adjusted Paces</a>
-              <a class="nav-item nav-link" href="/anomalies">Anomalies</a>
-              <a class="nav-item nav-link" href="/vdot">VDOT</a>
+              <a class="nav-item nav-link" href="{{ url_for('adjusted_paces') }}">Weather Adjusted Paces</a>
+              <a class="nav-item nav-link" href="{{ url_for('anomalies') }}">Anomalies</a>
+              <a class="nav-item nav-link" href="{{ url_for('vdot') }}">VDOT</a>
             </div>
           </div>
         </div>
       </nav>
     </header>
     <main role="main" class="container">
-      <div class="row">
+      <!--div class="row"-->
+      <div>
         {% block content %}{% endblock %}
         <!--div class="col-md-12">
         <!--/div>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>No Activity Data</h3>
+<p>
+    We cannot find your activity data. Please try downloading the activity data again using the link below.
+</p>
+<p>
+    <a class="btn btn-lg" href="{{ url_for('login') }}" role="button">Download Data</a>
+</p>
+{% endblock content %}

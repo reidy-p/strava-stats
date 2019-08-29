@@ -26,6 +26,8 @@ darksky_api_key: YOUR_DARKSKY_API_KEY
 
 TODO
 ---
+* Web interface for giving permission and downloading data
+* Use SQLAlchemy?
 * Improved anomaly detection
 * Package structure
 * Command line arguments

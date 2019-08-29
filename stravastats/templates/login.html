@@ -1,0 +1,12 @@
+{% extends "base-nonavbar.html" %}
+{% block content %}
+<div>
+    <h1>Welcome to Strava Stats</h1> 
+    <p>
+    Strava Stats needs access to your Strava account to download your activity data. To grant access, click the button below.
+    </p>
+    <p>
+        <a class="btn btn-lg" href="{{ authorize_url }}" role="button"><img src="/static/ConnectWithStrava.png" border="0" width="262" height="43" /></a>
+    </p>
+</div>
+{% endblock content %}
