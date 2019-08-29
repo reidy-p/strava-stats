@@ -1,3 +1,4 @@
 *.csv
 *.yml
 *.db
+__pycache__/
