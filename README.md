@@ -21,6 +21,8 @@ Setup the configuration file (``config.yml``) as follows:
 client_id: YOUR_CLIENT_ID
 client_secret: YOUR_CLIENT_SECRET
 darksky_api_key: YOUR_DARKSKY_API_KEY
+redis_port: 6379
+redis_password: YOUR_REDIS_PASSWORD
 ```
 
 To start the flask app run:

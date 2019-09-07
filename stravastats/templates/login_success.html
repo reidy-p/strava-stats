@@ -4,7 +4,7 @@
 You have successfully authorized the Strava Stats app to access your Strava data. To start downloading your activity data, click Download Data below. This may take several minutes and you will be redirected to the app when the download has completed:
 </p>
 <p>
-    <a class="btn btn-lg" href="{{ url_for('download_data', code=code) }}" role="button">Download Data</a>
+    <a class="btn btn-lg" href="{{ url_for('run_download_multithread', code=code) }}" role="button" onclick="getProgress()">Download Data</a>
 </p>
 <p>
     <a class="btn btn-lg" href="{{ url_for('stravastats') }}" role="button">Skip Download</a>
