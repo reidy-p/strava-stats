@@ -54,30 +54,14 @@ def stravastats():
 
 @app.route("/adjustedpaces")
 def adjusted_paces():
-    conn = sqlite3.connect('stravastats/activities.db')
-    with conn:
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT id, name, workout_type, minutes_per_km, minutes_per_km_adjusted, weather_summary, temperature, humidity 
-            FROM activities 
-            ORDER BY hadley_score DESC 
-            LIMIT 10
-        """)
-    posts = [dict(row) for row in cursor.fetchall()]
+    results = db.session.query(Activity).order_by(Activity.hadley_score.desc()).limit(10)
+    posts = [row.__dict__ for row in results]
     return render_template('adjusted_paces.html', posts=posts)
 
 @app.route("/anomalies")
 def anomalies():
-    conn = sqlite3.connect('stravastats/activities.db')
-    with conn:
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT id, name, workout_type, distance_metres, moving_time, moving_time_seconds, total_elevation_gain_metres, minutes_per_km, minutes_per_km_adjusted, temperature, humidity 
-            FROM activities 
-        """)
-        activities = pd.DataFrame([dict(row) for row in cursor.fetchall()])
+    results = db.session.query(Activity).order_by(Activity.hadley_score.desc())
+    activities = pd.DataFrame([row.__dict__ for row in results])
     
     clf = LocalOutlierFactor()
     y_pred = clf.fit_predict(activities[['distance_metres', 'moving_time_seconds', 'total_elevation_gain_metres', 'minutes_per_km', 'minutes_per_km_adjusted', 'temperature', 'humidity']])
@@ -86,17 +70,9 @@ def anomalies():
 
 @app.route("/vdot")
 def vdot():
-    conn = sqlite3.connect('stravastats/activities.db')
-    with conn:
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT id, name, distance_metres, moving_time, minutes_per_km 
-            FROM activities 
-            WHERE workout_type='Race'
-        """)
-        races = pd.DataFrame([dict(row) for row in cursor.fetchall()])
-    
+    results = db.session.query(Activity).order_by(Activity.hadley_score.desc())
+    races = pd.DataFrame([row.__dict__ for row in results])
+
     posts = []
     for r in races.to_dict(orient='records'):
         (r['vdot'], r['equivs']) = calculate_vdot(r['distance_metres'], r['moving_time'])

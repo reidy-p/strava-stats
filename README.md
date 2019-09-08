@@ -37,6 +37,7 @@ TODO
 ---
 * Improved logging
 * Use SQLAlchemy?
+* Improved performance of VDOT
 * Improved anomaly detection
 * Package structure
 * Adjusting pacing depending on wind (maybe too hard because of direction)

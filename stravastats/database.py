@@ -31,5 +31,5 @@ class Activity(db.Model):
     minutes_per_km_adjusted = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
-        return f"Activity('{self.name}', '{self.start_date_utc}'"
+        return f"Activity('{self.name}', '{self.start_date_utc}')"
 
