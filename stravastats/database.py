@@ -1,38 +1,35 @@
 from datetime import datetime
+from datetime import datetime
+from stravastats import db, app
 
-def get_latest_activity_date(cursor):
-    cursor.execute("""SELECT MAX(start_date_unix) FROM activities""")
-    latest_activity_date = cursor.fetchone()[0]
-    if latest_activity_date is None:
-        return None
-    else:
-        print("latest activity date is", datetime.fromtimestamp(latest_activity_date))
-        return datetime.fromtimestamp(latest_activity_date)
+def get_latest_activity_date(): 
+    latest_activity_date = db.session.query(db.func.max(Activity.start_date_utc)).scalar()
+    app.logger.info(f"Latest activity date found: {latest_activity_date}")
+    return latest_activity_date
 
-def create_table_if_not_exists(cursor):
-    sql_create_table = """CREATE TABLE IF NOT EXISTS activities (
-        id INTEGER PRIMARY KEY,
-        name TEXT NOT NULL,
-        workout_type TEXT NOT NULL,
-        start_date_unix INTEGER NOT NULL,
-        moving_time TEXT NOT NULL,
-        moving_time_seconds INTEGER NOT NULL,
-        type TEXT NOT NULL,
-        total_elevation_gain_metres REAL NOT NULL,
-        distance_metres REAL NOT NULL,
-        location_city TEXT,
-        location_country TEXT NOT NULL,
-        start_latitude REAL NOT NULL,
-        start_longitude REAL NOT NULL,
-        weather_summary TEXT NOT NULL,
-        temperature REAL NOT NULL,
-        humidity REAL NOT NULL,
-        dew_point REAL NOT NULL,
-        wind_speed REAL NOT NULL,
-        wind_gust REAL NOT NULL,
-        hadley_score REAL NOT NULL,
-        minutes_per_km REAL NOT NULL,
-        minutes_per_km_adjusted REAL NOT NULL
-    );
-    """
-    cursor.execute(sql_create_table)
+class Activity(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    workout_type = db.Column(db.String, nullable=False)
+    start_date_utc = db.Column(db.DateTime, nullable=False)
+    moving_time = db.Column(db.String, nullable=False)
+    moving_time_seconds = db.Column(db.Integer, nullable=False)
+    total_elevation_gain_metres = db.Column(db.Float, nullable=False)
+    distance_metres = db.Column(db.Float, nullable=False)
+    location_city = db.Column(db.String, nullable=True)
+    location_country = db.Column(db.String, nullable=False)
+    start_latitude = db.Column(db.Float, nullable=False)
+    start_longitude = db.Column(db.Float, nullable=False)
+    weather_summary = db.Column(db.String, nullable=False)
+    temperature = db.Column(db.Float, nullable=False)
+    humidity = db.Column(db.Float, nullable=False)
+    dew_point = db.Column(db.Float, nullable=False)
+    wind_speed = db.Column(db.Float, nullable=False)
+    wind_gust = db.Column(db.Float, nullable=False)
+    hadley_score = db.Column(db.Float, nullable=False)
+    minutes_per_km = db.Column(db.Float, nullable=False)
+    minutes_per_km_adjusted = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return f"Activity('{self.name}', '{self.start_date_utc}'"
+

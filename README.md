@@ -39,7 +39,6 @@ TODO
 * Use SQLAlchemy?
 * Improved anomaly detection
 * Package structure
-* Command line arguments
 * Adjusting pacing depending on wind (maybe too hard because of direction)
 * Improved location data using latitude and longitude and Google maps API
 * Grouping similar activities. Is this done already or is it something I could do?
