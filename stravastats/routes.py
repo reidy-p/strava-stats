@@ -70,15 +70,15 @@ def anomalies():
 
 @app.route("/vdot")
 def vdot():
-    results = db.session.query(Activity).order_by(Activity.hadley_score.desc())
+    results = db.session.query(Activity).filter(Activity.workout_type == 'Race').order_by(Activity.start_date_utc.desc())
     races = pd.DataFrame([row.__dict__ for row in results])
 
     posts = []
     for r in races.to_dict(orient='records'):
         (r['vdot'], r['equivs']) = calculate_vdot(r['distance_metres'], r['moving_time'])
         posts.append(r)
-    
-    return render_template('races.html', posts=posts)
+
+    return render_template('vdot.html', posts=posts)
 
 @app.errorhandler(sqlite3.OperationalError)
 def handle_no_table(error):

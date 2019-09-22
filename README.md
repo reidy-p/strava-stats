@@ -1,6 +1,6 @@
 # Strava Stats
 
-This project is still under active development.
+This project is under active development.
 
 [Strava](https://www.strava.com) is a popular social network where runners and cyclists can upload and compare data from their activities. This project allows a user to download their own running data from Strava's API and to calculate and view additional statistics. It is inspired by the [Strava Wind Analysis](https://github.com/MathBunny/strava-wind-analysis) for cyclists.
 
@@ -25,6 +25,11 @@ redis_port: 6379
 redis_password: YOUR_REDIS_PASSWORD
 ```
 
+This project uses [Redis](https://redis.io/) to track the progress of the downloading of data from the Strava API. To download data you must have redis installed and the Redis server running. You can download Redis from the website and start the server by running:
+```
+$ ./redis-stable/src/redis-server
+```
+
 To start the flask app run:
 ```
 $ python run.py
@@ -32,15 +37,3 @@ $ python run.py
 
 Go to ``localhost:5000`` on your web browser
 
-
-TODO
----
-* Improved logging
-* Use SQLAlchemy?
-* Improved performance of VDOT
-* Improved anomaly detection
-* Package structure
-* Adjusting pacing depending on wind (maybe too hard because of direction)
-* Improved location data using latitude and longitude and Google maps API
-* Grouping similar activities. Is this done already or is it something I could do?
-* Use richer python types for quantities rather than the simple string or numeric values that the Strava API returns or the simple quantities that stravalib returns
