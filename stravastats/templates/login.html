@@ -3,10 +3,16 @@
 <div>
     <h1>Welcome to Strava Stats</h1> 
     <p>
-    Strava Stats needs access to your Strava account to download your activity data. To grant access, click the button below.
+    Strava Stats needs access to your Strava account to download your activity data. To grant access, click the button below. If you wish to download any new activities since your latest download you should also click the button below:
     </p>
     <p>
         <a class="btn btn-lg" href="{{ authorize_url }}" role="button"><img src="/static/ConnectWithStrava.png" border="0" width="262" height="43" /></a>
+    </p>
+    <p>
+    Alternatively, if you have previously downloaded your data you can skip this download and continue to the main Strava Stats site:
+    </p>
+    <p>
+        <a class="btn btn-lg" href="{{ url_for('stravastats') }}" role="button">Skip Download</a>
     </p>
 </div>
 {% endblock content %}
