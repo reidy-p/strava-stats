@@ -62,9 +62,11 @@ def adjusted_paces():
 def anomalies():
     results = db.session.query(Activity).order_by(Activity.hadley_score.desc())
     activities = pd.DataFrame([row.__dict__ for row in results])
+    features = ['distance_metres', 'moving_time_seconds', 'total_elevation_gain_metres', 'minutes_per_km', 'minutes_per_km_adjusted', 'temperature', 'humidity']
+    activities = activities.dropna(subset=features, how='any')
     
     clf = LocalOutlierFactor()
-    y_pred = clf.fit_predict(activities[['distance_metres', 'moving_time_seconds', 'total_elevation_gain_metres', 'minutes_per_km', 'minutes_per_km_adjusted', 'temperature', 'humidity']])
+    y_pred = clf.fit_predict(activities[features])
     anomalies = activities[y_pred == -1]
     return render_template('anomalies.html', posts=anomalies.to_dict(orient='records'))
 
@@ -99,7 +101,7 @@ def progress():
     p = r.get("progress")
     p_msg = "data:" + str(p) + "\n\n"
     yield p_msg
-    time.sleep(5)
+    time.sleep(10)
 
   return Response(progress_stream(), mimetype='text/event-stream')
 
@@ -128,58 +130,61 @@ def download_task(code):
         progress_pct = ((counter + 1) / num_activities) * 100
         r.set("progress", str(progress_pct))
     
+        weather_data = {}
         if darksky_request.status_code == 200:
             weather_data = darksky_request.json()['currently']
-    
-            (hadley_score, hadley_pace_adjustment) = calculate_hadley_score(weather_data['dewPoint'], weather_data['temperature'])
-            minutes_per_km = calculate_speed(activity.moving_time.total_seconds(), activity.distance.get_num())
-            minutes_per_km_hadley_adjusted = minutes_per_km * (1 - hadley_pace_adjustment)
-    
-            activity_link = "https://www.strava.com/activities/" + str(activity.id)
-    
-            workout_types_lookup = {
-                '0': 'Easy Run',
-                '1': 'Race',
-                '2': 'Long Run',
-                '3': 'Workout'
-            }
-
-            a = Activity(
-                id = activity.id,
-                name = activity.name,
-                workout_type = workout_types_lookup.get(activity.workout_type, 'N/A'),
-                # TODO: Is this UTC?
-                start_date_utc = activity.start_date,
-                moving_time = format_seconds(activity.moving_time.total_seconds()),
-                moving_time_seconds = activity.moving_time.total_seconds(),
-                total_elevation_gain_metres = activity.total_elevation_gain.get_num(),
-                distance_metres = activity.distance.get_num(),
-                location_city = activity.location_city,
-                location_country = activity.location_country,
-                start_latitude = activity.start_latitude,
-                start_longitude = activity.start_longitude,
-                weather_summary = weather_data['summary'],
-                temperature = weather_data['temperature'],
-                humidity = weather_data['humidity'],
-                dew_point = weather_data['dewPoint'],
-                wind_speed = weather_data['windSpeed'],
-                wind_gust = weather_data['windGust'],
-                hadley_score = hadley_score,
-                minutes_per_km = minutes_per_km.magnitude,
-                minutes_per_km_adjusted = minutes_per_km_hadley_adjusted.magnitude
-            )
-            db.session.add(a)
-            db.session.commit()
-
         elif darksky_request.status_code == 400:
-            error_msg = f"{darksky_request.json()['code']} Error: {darksky_request.json()['error']}"
-            app.logger.warn(error_msg + ", skipping request and continuing to next activity")
+            app.logger.warn(f"{darksky_request.json()['code']} Error: {darksky_request.json()['error']}")
         elif darksky_request.status_code == 403:
-            app.logger.error(f"{darksky_request.json()['code']} Error: DarkSky API daily usage limit exceeded. Terminating data download")
-            break
+            app.logger.warn(f"{darksky_request.json()['code']} Error: DarkSky API daily usage limit exceeded.")
         else:
             app.logger.error(f"{darksky_request.json()['code']} Error: {darksky_request.json()['error']}. Terminating data download")
-            break
+            continue
+
+        (hadley_score, hadley_pace_adjustment) = calculate_hadley_score(weather_data.get('dewPoint'), weather_data.get('temperature'))
+        minutes_per_km = calculate_speed(activity.moving_time.total_seconds(), activity.distance.get_num())
+        if hadley_pace_adjustment is not None:
+            minutes_per_km_hadley_adjusted = (minutes_per_km * (1 - hadley_pace_adjustment)).magnitude
+        else:
+            minutes_per_km_hadley_adjusted = None
+
+        activity_link = "https://www.strava.com/activities/" + str(activity.id)
+
+        workout_types_lookup = {
+            '0': 'Easy Run',
+            '1': 'Race',
+            '2': 'Long Run',
+            '3': 'Workout'
+        }
+
+        activity = Activity(
+            id = activity.id,
+            name = activity.name,
+            workout_type = workout_types_lookup.get(activity.workout_type, 'N/A'),
+            # TODO: Is this UTC?
+            start_date_utc = activity.start_date,
+            moving_time = format_seconds(activity.moving_time.total_seconds()),
+            moving_time_seconds = activity.moving_time.total_seconds(),
+            total_elevation_gain_metres = activity.total_elevation_gain.get_num(),
+            distance_metres = activity.distance.get_num(),
+            location_city = activity.location_city,
+            location_country = activity.location_country,
+            start_latitude = activity.start_latitude,
+            start_longitude = activity.start_longitude,
+            weather_summary = weather_data.get('summary'),
+            temperature = weather_data.get('temperature'),
+            humidity = weather_data.get('humidity'),
+            dew_point = weather_data.get('dewPoint'),
+            wind_speed = weather_data.get('windSpeed'),
+            wind_gust = weather_data.get('windGust'),
+            hadley_score = hadley_score,
+            minutes_per_km = minutes_per_km.magnitude,
+            minutes_per_km_adjusted = minutes_per_km_hadley_adjusted
+        )
+
+        db.session.add(activity)
+        db.session.commit()
+
 
 @app.route('/download/<code>')
 def run_download_multithread(code):

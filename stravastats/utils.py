@@ -43,6 +43,9 @@ def calculate_speed(moving_time_seconds, distance_metres):
     return moving_minutes / km
 
 def calculate_hadley_score(dewPoint, temperature):
+    if dewPoint is None or temperature is None:
+        return (None, None)
+
     hadley_score = dewPoint + temperature
 
     if hadley_score <= 100:

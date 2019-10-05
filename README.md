@@ -37,3 +37,6 @@ $ python run.py
 
 Go to ``localhost:5000`` on your web browser
 
+DarkSky API
+---
+This app uses the [DarkSky API](https://darksky.net/dev) to gather historical weather data. You will need to sign up to the API to get a key to put in the ``config.yml`` file as shown above. Note that you can get 1,000 API calls for free each day from the DarkSky API. You must pay for additional calls beyond this limit by signing up on the API's website.
