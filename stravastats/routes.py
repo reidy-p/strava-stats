@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 from sklearn.neighbors import LocalOutlierFactor
 from flask import render_template, url_for, redirect, request, send_file, Response
-import sqlite3
+import sqlalchemy
 from stravastats.utils import calculate_vdot
 from stravastats import app, executor, db
 import yaml
@@ -80,9 +80,9 @@ def vdot():
 
     return render_template('vdot.html', posts=posts)
 
-@app.errorhandler(sqlite3.OperationalError)
+@app.errorhandler(sqlalchemy.exc.OperationalError)
 def handle_no_table(error):
-    if str(error) == "no such table: activities":
+    if str(error.orig) == "no such table: activity":
         return render_template('noactivitydata.html')
     else:
         return render_template('sqliteerror.html', error=error)
