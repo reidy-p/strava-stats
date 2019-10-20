@@ -1,5 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
+<p>
+Temperature and humidity are two important factors that affect running performance. However, there is some debate about how much impact they have. The Strava Stats app automatically calculates adjusted paces for each activity based on <a href="http://maximumperformancerunning.blogspot.com/2013/07/temperature-dew-point.html">these tables</a> proposed by Coach Mark Hadley. This adjustment involves two steps. First, we calculate the Hadley score by adding the Fahrenheit temperature and the Dew Point humidity. Second, we adjust the actual speed based on this Hadley score according to the list below:
+<ul>
+<li>100 or less: no pace adjustment</li>
+<li>101 to 110: 0% to 0.5% pace adjustment</li>
+<li>111 to 120: 0.5% to 1.0% pace adjustment</li>
+<li>121 to 130: 1.0% to 2.0% pace adjustment</li>
+<li>131 to 140: 2.0% to 3.0% pace adjustment</li>
+<li>141 to 150: 3.0% to 4.5% pace adjustment</li>
+<li>151 to 160: 4.5% to 6.0% pace adjustment</li>
+<li>161 to 170: 6.0% to 8.0% pace adjustment</li>
+<li>171 to 180: 8.0% to 10.0% pace adjustment</li>
+</ul>
+
+In this page I show the ten activities with the highest Hadley Score. These are the activities with the biggest different between actual speed and adjusted speed.
+</p>
 <h2>Worst Conditions</h2>
 <table id="example" class="table table-responsive">
   <thead>
@@ -10,8 +26,9 @@
       <th scope="col" class="text-nowrap">Weather Summary</th>
       <th scope="col" class="text-nowrap">Temperature (°F)</th>
       <th scope="col" class="text-nowrap">Humidity</th>
-      <th scope="col" class="text-nowrap">Pace (minutes/km)</th>
-      <th scope="col" class="text-nowrap">Adjusted Pace (minutes/km)</th>
+      <th scope="col" class="text-nowrap">Hadley Score</th>
+      <th scope="col" class="text-nowrap">Pace (mins/km)</th>
+      <th scope="col" class="text-nowrap" style="background-color:#cbd5db">Adjusted Pace (mins/km)</th>
     </tr>
   </thead>
   <tbody>
@@ -23,6 +40,7 @@
         <td> {{ post.weather_summary }} </td>
         <td> {{ post.temperature }} </td>
         <td> {{ post.humidity }} </td>
+        <td> {{ post.hadley_score | round(2, 'common') }} </td>
         <td> {{ post.minutes_per_km | round(2, 'common') }} </td>
         <td> {{ post.minutes_per_km_adjusted | round(2, 'common') }} </td>
     </tr>

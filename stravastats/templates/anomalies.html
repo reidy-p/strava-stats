@@ -1,5 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
+In this page we show activities that are detected as anomalous by the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.LocalOutlierFactor.html">Local Outlier Factor</a> algorithm. The features used for this unsupervised learning algorithm are:
+<ul>
+    <li>Distance (metres)</li>
+    <li>Moving Time (seconds)</li>
+    <li>Total Elevation Gain metres</li>
+    <li>Minutes per Kilometre</li>
+    <li>Minutes per Kilometre (adjusted for weather conditions)</li>
+    <li>Temperature</li>
+    <li>Humidity</li>
+</ul>
+You can use the sort feature on the table below to find activities that are very short, for example.
+
 <h2>Anomalous Activities</h2>
 <table id="example" class="table table-responsive">
   <thead>
@@ -11,8 +23,8 @@
       <th scope="col" class="text-nowrap">Time</th>
       <th scope="col" class="text-nowrap">Temperature (°F)</th>
       <th scope="col" class="text-nowrap">Humidity</th>
-      <th scope="col" class="text-nowrap">Pace (minutes/km)</th>
-      <th scope="col" class="text-nowrap">Adjusted Pace (minutes/km)</th>
+      <th scope="col" class="text-nowrap">Pace (mins/km)</th>
+      <th scope="col" class="text-nowrap">Adjusted Pace (mins/km)</th>
     </tr>
   </thead>
   <tbody>
