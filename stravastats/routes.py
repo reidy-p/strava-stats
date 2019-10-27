@@ -55,7 +55,7 @@ def stravastats():
 @app.route("/adjustedpaces")
 def adjusted_paces():
     results = db.session.query(Activity).order_by(Activity.hadley_score.desc()).limit(10)
-    posts = [row.__dict__ for row in results]
+    posts = [row.__dict__ for row in results if row.hadley_score >= 100]
     return render_template('adjusted_paces.html', posts=posts)
 
 @app.route("/anomalies")
