@@ -13,6 +13,10 @@ Features
 
 Screenshots
 ---
+![jpg](/screenshots/welcome_page.jpg)
+![jpg](/screenshots/adjusted_paces.jpg)
+![jpg](/screenshots/anomalies.jpg)
+![jpg](/screenshots/vdot.jpg)
 
 Usage
 ---

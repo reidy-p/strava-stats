@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<p>
 In this page we show activities that are detected as anomalous by the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.LocalOutlierFactor.html">Local Outlier Factor</a> algorithm. The features used for this unsupervised learning algorithm are:
 <ul>
     <li>Distance (metres)</li>
@@ -11,6 +12,7 @@ In this page we show activities that are detected as anomalous by the <a href="h
     <li>Humidity</li>
 </ul>
 You can use the sort feature on the table below to find activities that are very short, for example.
+</p>
 
 <h2>Anomalous Activities</h2>
 <table id="example" class="table table-responsive">

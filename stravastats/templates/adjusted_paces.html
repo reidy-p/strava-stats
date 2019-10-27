@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <p>
-Temperature and humidity are two important factors that affect running performance. However, there is some debate about how much impact they have. The Strava Stats app automatically calculates adjusted paces for each activity based on <a href="http://maximumperformancerunning.blogspot.com/2013/07/temperature-dew-point.html">these tables</a> proposed by Coach Mark Hadley. This adjustment involves two steps. First, we calculate the Hadley score by adding the Fahrenheit temperature and the Dew Point humidity. Second, we adjust the actual speed based on this Hadley score according to the list below:
+Temperature and humidity are two important factors that affect running performance. The Strava Stats app automatically calculates adjusted paces for each activity based on <a href="http://maximumperformancerunning.blogspot.com/2013/07/temperature-dew-point.html">these tables</a> proposed by Coach Mark Hadley. This adjustment involves two steps. First, we calculate the Hadley score by adding the Fahrenheit temperature and the Dew Point humidity. Second, we adjust the actual speed based on this Hadley score according to the list below:
 <ul>
 <li>100 or less: no pace adjustment</li>
 <li>101 to 110: 0% to 0.5% pace adjustment</li>
@@ -42,7 +42,7 @@ In this page I show the ten activities with the highest Hadley Score. These are 
         <td> {{ post.humidity }} </td>
         <td> {{ post.hadley_score | round(2, 'common') }} </td>
         <td> {{ post.minutes_per_km | round(2, 'common') }} </td>
-        <td> {{ post.minutes_per_km_adjusted | round(2, 'common') }} </td>
+        <td style="background-color:#cbd5db"> {{ post.minutes_per_km_adjusted | round(2, 'common') }} </td>
     </tr>
     {% endfor %}
   </tbody>
