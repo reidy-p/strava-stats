@@ -1,5 +1,7 @@
 import requests
 from pint import UnitRegistry
+from stravastats import app
+import math
 
 def format_seconds(seconds):
     """
@@ -76,3 +78,12 @@ def make_darksky_request(api_key, latitude, longitude, time):
     clean_time = time.replace(microsecond=0)
     url = "https://api.darksky.net/forecast/{}/{},{}".format(api_key, latitude, longitude, clean_time)
     return requests.get(url)
+
+def format_pace(minutes_per_km):
+    (frac, integer) = math.modf(minutes_per_km)
+    seconds = round(frac*60, 0)
+    if seconds >= 60:
+        integer += 1
+        seconds = 0
+    return f"{integer:.0f}:{seconds:02.0f}"
+

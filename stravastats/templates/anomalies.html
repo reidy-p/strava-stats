@@ -39,8 +39,8 @@ You can use the sort feature on the table below to find activities that are very
         <td> {{ post.moving_time }} </td>
         <td> {{ post.temperature }} </td>
         <td> {{ post.humidity }} </td>
-        <td> {{ post.minutes_per_km | round(2, 'common') }} </td>
-        <td> {{ post.minutes_per_km_adjusted | round(2, 'common') }} </td>
+        <td> {{ post.minutes_per_km | format_pace }} </td>
+        <td> {{ post.minutes_per_km_adjusted | format_pace }} </td>
     </tr>
     {% endfor %}
   </tbody>

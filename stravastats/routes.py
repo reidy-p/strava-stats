@@ -25,7 +25,8 @@ def login():
                               redirect_uri=url_for('.logged_in', _external=True),
                               approval_prompt='auto',
                               # Change to None if you don't want private activities included
-                              scope='activity:read_all'
+                              # scope=['read', 'read_all', 'profile:read_all', 'profile:write', 'activity:read','activity:read_all', 'activity:write']
+                              scope=['activity:read','activity:read_all', 'activity:write']
     )
 
     return render_template('login.html', authorize_url=url)
@@ -147,8 +148,6 @@ def download_task(code):
             minutes_per_km_hadley_adjusted = (minutes_per_km * (1 - hadley_pace_adjustment)).magnitude
         else:
             minutes_per_km_hadley_adjusted = None
-
-        activity_link = "https://www.strava.com/activities/" + str(activity.id)
 
         workout_types_lookup = {
             '0': 'Easy Run',

@@ -41,8 +41,8 @@ In this page we show up to ten activities with the highest Hadley Score. These a
         <td> {{ post.temperature }} </td>
         <td> {{ post.humidity }} </td>
         <td> {{ post.hadley_score | round(2, 'common') }} </td>
-        <td> {{ post.minutes_per_km | round(2, 'common') }} </td>
-        <td style="background-color:#cbd5db"> {{ post.minutes_per_km_adjusted | round(2, 'common') }} </td>
+        <td> {{ post.minutes_per_km | format_pace }} </td>
+        <td style="background-color:#cbd5db"> {{ post.minutes_per_km_adjusted | format_pace }} </td>
     </tr>
     {% endfor %}
   </tbody>

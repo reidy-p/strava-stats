@@ -28,7 +28,7 @@ This page shows your estimated VDOT value based on activities that are marked as
         <td> <a href="https://www.strava.com/activities/{{ post.id }}">{{ post.name }}</a> </td>
         <td> {{ (post.distance_metres / 1000) | round(2, 'common') }}km </td>
         <td> {{ post.moving_time }} </td>
-        <td> {{ post.minutes_per_km | round(2, 'common') }} </td>
+        <td> {{ post.minutes_per_km | format_pace }} </td>
         <td> {{ post.vdot }} </td>
         {% for equiv in post.equivs %}
             {% if equiv.distance == "Marathon" %}
