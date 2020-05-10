@@ -1,4 +1,6 @@
 *.csv
 *.yml
 *.db
+*.pyc
 __pycache__/
+strava-env
